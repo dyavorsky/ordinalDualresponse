@@ -1,0 +1,87 @@
+---
+title: "The model in miniature: a first ordinal dual-response example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The model in miniature: a first ordinal dual-response example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This vignette walks through the smallest interesting version of the ordinal
+dual-response model: **one attribute**, homogeneous preferences, and a
+**three-point** purchase-likelihood scale ("unlikely / unsure / likely").
+It mirrors the worked example in the accompanying paper.
+
+## The behavioral model in four lines
+
+In each task a consumer sees $J$ inside goods with utilities
+$u_j = V_j + \eta_j$, $\eta_j \sim \text{Gumbel}(0,1)$, picks the best one
+(the forced choice), and then evaluates buying it against an outside good
+whose shock $\eta_0$ she has not resolved. Under **Model A** she reports the
+*probability* $F(u^*)$ in bins; under **Model B** she grades the realized
+comparison $u^* - \eta_0$. Both give a joint likelihood of MNL $\times$ a
+cumulative-link ordinal model driven by the task's inclusive value
+$\bar\mu = \ln \sum_j e^{V_j}$.
+
+## Two consumers, opposite reports, identical choices
+
+Give two consumers the same taste ($\beta = 1$) and the same *within-task*
+spread of the attribute, but different levels:
+
+```{r}
+library(ordinalDR)
+beta <- 1
+cut <- c(0, 2)                       # W = 3: "unlikely" | "unsure" | "likely"
+x1 <- c(2, 1)                        # attractive task
+x2 <- c(-1, -2)                      # unattractive task
+
+mnl <- function(x) exp(beta * x) / sum(exp(beta * x))
+rbind(task1 = mnl(x1), task2 = mnl(x2))
+```
+
+The forced-choice probabilities are identical — the MNL reads only
+*differences*. The ordinal stage reads *levels*:
+
+```{r}
+mubar <- c(log(sum(exp(beta * x1))), log(sum(exp(beta * x2))))
+probs <- function(mu, model) diff(c(0, if (model == "B") plogis(cut - mu)
+                                    else exp(-exp(-(cut - mu))), 1))
+rbind(task1_B = probs(mubar[1], "B"), task2_B = probs(mubar[2], "B"),
+      task1_A = probs(mubar[1], "A"), task2_A = probs(mubar[2], "A"))
+```
+
+Near mirror images. All demand information flows through the second response.
+
+## Simulate the two-consumer world at scale and estimate
+
+`dr_simulate()` draws raw utilities and applies the reporting rules — the
+estimation below therefore validates the *derivation*, not just the code.
+
+```{r}
+n <- 4000
+X <- matrix(rep(c(x1, x2), n / 2), ncol = 1)
+des <- list(X = X, n_tasks = n, J = 2, P = 1)
+dat <- dr_simulate(des, matrix(beta, 1, 1), cut, model = "B", seed = 7)
+fit <- dr_mle(dat)
+fit
+```
+
+The MLE recovers $\beta = 1$ and the cut points $(0, 2)$ from nothing but
+choices and three-point reports. The identification requirement — no
+attribute direction constant across all inside goods — holds here because
+the two tasks sit at different levels:
+
+```{r}
+dr_rank_check(des$X)
+```
+
+## Where to go next
+
+* `vignette("aggregate-study")` — a realistic aggregate analysis with
+  dichotomization comparisons and specification tests.
+* `vignette("hierarchical")` — the hierarchical Bayesian model with
+  individual part-worths and heterogeneous cut points.

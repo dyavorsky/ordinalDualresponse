@@ -1,0 +1,68 @@
+---
+title: "Hierarchical Bayes: individual part-worths and heterogeneous cut points"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hierarchical Bayes: individual part-worths and heterogeneous cut points}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+The full model: individual part-worths $\beta_i \sim \mathcal{N}(\bar\beta,
+\Sigma)$ estimated by random-walk Metropolis within Gibbs, with common cut
+points — and, as an extension, respondent-specific cut points that allow
+people to use the scale differently. (Chains here are kept short so the
+vignette builds quickly; use the defaults — 30,000 iterations — in real work.)
+
+## Simulate a panel and fit
+
+```{r}
+library(ordinalDR)
+N <- 80; T_tasks <- 10
+beta_bar <- c(a2 = 0.8, a3 = -0.5, b2 = 0.4, b3 = 1.0, price = -0.9)
+Sigma <- diag(c(0.6, 0.6, 0.6, 0.6, 0.3))
+cut <- c(-1.0, 0.2, 1.2, 2.2)
+
+des <- dr_panel_design(N, T_tasks, J = 4, seed = 1)
+B <- dr_draw_betas(N, beta_bar, Sigma, seed = 2)
+dat <- dr_simulate(des, B, cut, model = "B", seed = 3)
+
+fit <- dr_hb(dat, mcmc = list(R = 4000, burn = 2000, thin = 4),
+             seed = 4, verbose = FALSE)
+summary(fit, truth = c(beta_bar, cut))
+```
+
+## Individual-level part-worths and holdout prediction
+
+```{r}
+bi <- dr_hb_betai(fit)
+cor(as.numeric(bi), as.numeric(B))
+
+sp <- dr_split_holdout(dat, 2)
+fit_est <- dr_hb(sp$est, mcmc = list(R = 3000, burn = 1500, thin = 3),
+                 seed = 5, verbose = FALSE)
+dr_holdout_ll(fit_est, sp$holdout)$total
+dr_waic(fit_est$ll_resp)$waic
+```
+
+## Heterogeneous cut points
+
+Different people can mean different things by "somewhat likely." The
+extension puts $(c_{i1}, \log \text{increments})$ into the multivariate
+normal hierarchy alongside $\beta_i$:
+
+```{r}
+fit_het <- dr_hb(dat, mcmc = list(R = 4000, burn = 2000, thin = 4),
+                 het_cut = TRUE, seed = 6, verbose = FALSE)
+round(colMeans(fit_het$draws$phibar), 3)
+```
+
+The last $W-1$ components are the population mean of $(c_{i1}, \log
+\Delta_2, \ldots)$; their population covariance (in `fit_het$draws$Sigma`)
+measures how heterogeneous scale usage is. With common-cut data (as here) the
+het-cut model should — and does — find little cut-point heterogeneity, at the
+price of extra parameters; the paper's simulation study quantifies when the
+extension pays for itself.
