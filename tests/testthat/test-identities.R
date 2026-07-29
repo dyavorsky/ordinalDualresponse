@@ -2,7 +2,7 @@ test_that("interval probabilities sum to one for both links, including extreme c
   for (model in c("A", "B")) {
     for (cut in list(c(-1, 0.2, 1.2, 2.2), c(-8, -6, 7, 9), c(0.001, 0.002, 0.003, 0.004))) {
       mubar <- seq(-6, 6, length.out = 25)
-      p <- vapply(1:5, function(w) ordinalDR:::ord_prob(mubar, cut, rep(w, 25), model),
+      p <- vapply(1:5, function(w) ordinalDualresponse:::ord_prob(mubar, cut, rep(w, 25), model),
                   numeric(25))
       expect_true(all(p >= 0))
       expect_equal(rowSums(p), rep(1, 25), tolerance = 1e-12)
@@ -12,7 +12,7 @@ test_that("interval probabilities sum to one for both links, including extreme c
 
 test_that("tail-stable interval probabilities have no NaNs at extremes", {
   for (model in c("A", "B")) {
-    p <- ordinalDR:::ord_prob_z(c(-Inf, -750, 700), c(-745, -740, Inf), model)
+    p <- ordinalDualresponse:::ord_prob_z(c(-Inf, -750, 700), c(-745, -740, Inf), model)
     expect_true(all(is.finite(p)))
     expect_true(all(p >= 0 & p <= 1))
   }
@@ -35,7 +35,7 @@ test_that("W = 2 Model B collapses exactly to MNL with a no-choice constant", {
 
 test_that("cut-point transform round-trips", {
   cut <- c(-1.3, -0.2, 0.9, 2.5)
-  expect_equal(ordinalDR:::par_to_cut(c(rep(0, 3), ordinalDR:::cut_to_par(cut)), 3, 5),
+  expect_equal(ordinalDualresponse:::par_to_cut(c(rep(0, 3), ordinalDualresponse:::cut_to_par(cut)), 3, 5),
                cut, tolerance = 1e-12)
 })
 
@@ -59,7 +59,7 @@ test_that("simulated joint pmf matches the closed-form likelihood", {
     V <- as.numeric(X0 %*% beta)
     mnl <- exp(V) / sum(exp(V))
     mubar <- log(sum(exp(V)))
-    pw <- ordinalDR:::ord_prob(rep(mubar, 5), cut, 1:5, model)
+    pw <- ordinalDualresponse:::ord_prob(rep(mubar, 5), cut, 1:5, model)
     emp <- as.numeric(table(factor(dat$jstar, 1:4), factor(dat$y, 1:5))) / 20000
     theo <- as.numeric(outer(mnl, pw))
     expect_lt(max(abs(emp - theo)), 0.012)

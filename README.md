@@ -1,11 +1,11 @@
-# ordinalDR
+# ordinalDualresponse
 
 Ordinal dual-response choice models for conjoint analysis.
 
 Choice-based conjoint studies increasingly pair each forced choice with an
 **ordinal** purchase-likelihood follow-up ("how likely are you to buy the
 option you selected?" on a 5- or 7-point scale) instead of the binary
-buy/no-buy question of the dual-response literature. `ordinalDR` provides the
+buy/no-buy question of the dual-response literature. `ordinalDualresponse` provides the
 statistical model for that design.
 
 ## The model in five equations
@@ -48,13 +48,13 @@ Gumbel(0,1), and an outside-good shock $\eta_0$ the consumer has not resolved:
 
 ```r
 # development version (private during paper review)
-remotes::install_github("dyavorsky/ordinalDR")
+remotes::install_github("dyavorsky/ordinalDualresponse")
 ```
 
 ## Quick start
 
 ```r
-library(ordinalDR)
+library(ordinalDualresponse)
 beta <- c(a2 = 0.8, a3 = -0.5, b2 = 0.4, b3 = 1.0, price = -0.9)
 cut  <- c(-1.0, 0.2, 1.2, 2.2)                  # 5-point scale
 des  <- dr_design(3600, J = 4, seed = 1)

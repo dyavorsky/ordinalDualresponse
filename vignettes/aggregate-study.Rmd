@@ -20,7 +20,7 @@ purchase-likelihood follow-up, and 3,600 tasks (think 300 respondents times
 ## Simulate and estimate
 
 ```{r}
-library(ordinalDR)
+library(ordinalDualresponse)
 beta <- c(a2 = 0.8, a3 = -0.5, b2 = 0.4, b3 = 1.0, price = -0.9)
 cut <- c(-1.0, 0.2, 1.2, 2.2)
 des <- dr_design(3600, J = 4, seed = 42)

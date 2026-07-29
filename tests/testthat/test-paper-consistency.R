@@ -5,14 +5,14 @@
 # estimates.
 
 test_that("package reproduces the paper repo's Model B set1 recovery fit", {
-  paper <- Sys.getenv("ORDINALDR_PAPER_REPO",
-                      file.path("..", "..", "..", "likert_dualresponse"))
+  paper <- Sys.getenv("ORDINALDUALRESPONSE_PAPER_REPO",
+                      file.path("..", "..", "..", "ordinalDualresponse_paper"))
   rds <- file.path(paper, "R", "output", "identification_test.rds")
   skip_if_not(file.exists(rds), "paper repo results not available")
   stored <- readRDS(rds)$recovery$B_set1_moderate
   skip_if(is.null(stored), "stored recovery entry not found")
 
-  # settings mirrored from likert_dualresponse/R/identification_test.R:
+  # settings mirrored from ordinalDualresponse_paper/R/identification_test.R:
   # Model B, set1_moderate is the 4th (model, set) combination -> seed_counter 4
   beta <- c(a2 = 0.8, a3 = -0.5, b2 = 0.4, b3 = 1.0, price = -0.9)
   cutB <- c(-1.0, 0.2, 1.2, 2.2)

@@ -1,4 +1,4 @@
 library(testthat)
-library(ordinalDR)
+library(ordinalDualresponse)
 
-test_check("ordinalDR")
+test_check("ordinalDualresponse")

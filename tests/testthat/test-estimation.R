@@ -17,8 +17,8 @@ test_that("dr_loglik matches negloglik", {
   dat <- dr_simulate(des, matrix(c(0.5, -0.2, 0.3, 0.6, -0.7), 1, 5),
                      c(-1, 0, 1, 2), model = "B", seed = 4)
   ll <- dr_loglik(c(0.5, -0.2, 0.3, 0.6, -0.7), c(-1, 0, 1, 2), dat)
-  expect_equal(ll, -ordinalDR:::negloglik(c(0.5, -0.2, 0.3, 0.6, -0.7,
-                                            ordinalDR:::cut_to_par(c(-1, 0, 1, 2))), dat),
+  expect_equal(ll, -ordinalDualresponse:::negloglik(c(0.5, -0.2, 0.3, 0.6, -0.7,
+                                            ordinalDualresponse:::cut_to_par(c(-1, 0, 1, 2))), dat),
                tolerance = 1e-12)
 })
 
@@ -28,8 +28,8 @@ test_that("Fisher information matches observed information at the truth", {
   des <- dr_design(20000, 4, seed = 21)
   dat <- dr_simulate(des, matrix(beta, 1, 5), cut, model = "B", seed = 22)
   I_exp <- dr_fisher(des, beta, cut, "B")
-  H_obs <- stats::optimHess(c(beta, ordinalDR:::cut_to_par(cut)),
-                            function(p) ordinalDR:::negloglik(p, dat))
+  H_obs <- stats::optimHess(c(beta, ordinalDualresponse:::cut_to_par(cut)),
+                            function(p) ordinalDualresponse:::negloglik(p, dat))
   # compare in the beta block on the natural scale (cut blocks differ by the
   # working-parameter transform)
   expect_lt(max(abs(I_exp[1:5, 1:5] - H_obs[1:5, 1:5]) / abs(I_exp[1:5, 1:5])), 0.06)

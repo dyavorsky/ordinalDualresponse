@@ -20,7 +20,7 @@ vignette builds quickly; use the defaults — 30,000 iterations — in real work
 ## Simulate a panel and fit
 
 ```{r}
-library(ordinalDR)
+library(ordinalDualresponse)
 N <- 80; T_tasks <- 10
 beta_bar <- c(a2 = 0.8, a3 = -0.5, b2 = 0.4, b3 = 1.0, price = -0.9)
 Sigma <- diag(c(0.6, 0.6, 0.6, 0.6, 0.3))

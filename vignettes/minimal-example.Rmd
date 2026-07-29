@@ -33,7 +33,7 @@ Give two consumers the same taste ($\beta = 1$) and the same *within-task*
 spread of the attribute, but different levels:
 
 ```{r}
-library(ordinalDR)
+library(ordinalDualresponse)
 beta <- 1
 cut <- c(0, 2)                       # W = 3: "unlikely" | "unsure" | "likely"
 x1 <- c(2, 1)                        # attractive task
