@@ -67,5 +67,5 @@ See the vignettes: `minimal-example`, `aggregate-study`, `hierarchical`.
 
 ## Reference
 
-Bhalerao, Yavorsky & Zheng, "Outside Good Uncertainty: Ordinal Dual Response
+Yavorsky & Zheng, "Outside Good Uncertainty: Ordinal Dual Response
 in Choice-Based Conjoint Analysis" (working paper).

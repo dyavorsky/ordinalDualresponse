@@ -3,7 +3,6 @@ Title: Ordinal Dual-Response Choice Models for Conjoint Analysis
 Version: 0.1.0
 Authors@R: c(
     person("Dan", "Yavorsky", email = "dyavorsky@gmail.com", role = c("aut", "cre")),
-    person("Prachi", "Bhalerao", role = "ctb"),
     person("Geoffery", "Zheng", role = "ctb"))
 Description: Simulation, estimation, and design tools for choice-based conjoint
     studies with an ordinal dual-response follow-up question ("how likely are
