@@ -1,5 +1,11 @@
 # ordinalDualresponse
 
+> **Work in progress — not yet ready for public use.**
+> This package accompanies a paper under development. The API, argument names, and
+> return values are still changing without notice, the documentation is incomplete,
+> and results should not be relied on for production or published work. It is shared
+> for transparency and comment, not as a finished tool.
+
 Ordinal dual-response choice models for conjoint analysis.
 
 Choice-based conjoint studies increasingly pair each forced choice with an
